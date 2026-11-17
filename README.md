@@ -56,7 +56,25 @@ lib/               Typed navigation and dashboard data
 
 ## Integration status
 
-The current version is a functional front-end prototype. Live OAuth, publishing, scheduled background jobs, media storage, and analytics syncing require the relevant platform API credentials and a backend service.
+The production code includes secure OAuth connection flows for X, LinkedIn, Facebook/Instagram, Threads, and Google/YouTube. Apply the Supabase migrations and copy `.env.example` to `.env.local` before connecting live accounts. Tokens are encrypted with AES-256-GCM before storage and are never exposed to browser clients.
+
+Generate the encryption key once and store it in your deployment secret manager:
+
+```bash
+openssl rand -base64 32
+```
+
+Each provider app must use these callback URL patterns:
+
+```text
+https://YOUR_DOMAIN/api/oauth/x/callback
+https://YOUR_DOMAIN/api/oauth/linkedin/callback
+https://YOUR_DOMAIN/api/oauth/meta/callback
+https://YOUR_DOMAIN/api/oauth/threads/callback
+https://YOUR_DOMAIN/api/oauth/google/callback
+```
+
+Real publishing, scheduled background jobs, media storage, token refresh jobs, and analytics syncing are separate components still to be implemented.
 
 ## Live preview
 
