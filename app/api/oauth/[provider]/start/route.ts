@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerEnvironment } from "@/lib/env";
-import { getDefaultWorkspaceId } from "@/lib/social/connections";
+import { getErrorMessage } from "@/lib/errors";
+import { ensureDefaultWorkspace } from "@/lib/social/connections";
 import { createAuthorizationRequest, encodeOAuthSession } from "@/lib/social/oauth";
 import { isSocialProvider } from "@/lib/social/providers";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
@@ -16,8 +17,7 @@ export async function GET(request: NextRequest, context: { params: Promise<{ pro
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return NextResponse.redirect(new URL("/login?next=/accounts", request.url));
 
-    const workspaceId = request.nextUrl.searchParams.get("workspace_id") ?? await getDefaultWorkspaceId(user.id);
-    if (!workspaceId) return NextResponse.redirect(new URL("/accounts?error=workspace_required", request.url));
+    const workspaceId = request.nextUrl.searchParams.get("workspace_id") ?? await ensureDefaultWorkspace(user);
     const redirectUri = `${environment.NEXT_PUBLIC_APP_URL}/api/oauth/${provider}/callback`;
     const { authorizationUrl, session } = await createAuthorizationRequest(provider, redirectUri, workspaceId);
     const response = NextResponse.redirect(authorizationUrl);
@@ -30,7 +30,7 @@ export async function GET(request: NextRequest, context: { params: Promise<{ pro
     });
     return response;
   } catch (error) {
-    console.error("OAuth start failed", { provider, error: error instanceof Error ? error.message : "Unknown error" });
+    console.error("OAuth start failed", { provider, error: getErrorMessage(error) });
     fallback.searchParams.set("error", "provider_not_configured");
     fallback.searchParams.set("provider", provider);
     return NextResponse.redirect(fallback);

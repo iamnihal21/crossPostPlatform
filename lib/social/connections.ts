@@ -12,6 +12,32 @@ export async function getDefaultWorkspaceId(userId: string) {
   return data?.workspace_id as string | undefined;
 }
 
+export async function ensureDefaultWorkspace(user: User) {
+  const existingWorkspaceId = await getDefaultWorkspaceId(user.id);
+  if (existingWorkspaceId) return existingWorkspaceId;
+
+  const admin = createSupabaseAdminClient();
+  const nameSource = typeof user.user_metadata.full_name === "string"
+    ? user.user_metadata.full_name
+    : user.email?.split("@")[0] ?? "My workspace";
+  const name = nameSource.trim().slice(0, 100) || "My workspace";
+  const slug = `personal-${user.id.slice(0, 12)}`;
+  const { data: workspace, error: workspaceError } = await admin
+    .from("workspaces")
+    .upsert({ name, slug, owner_id: user.id, updated_at: new Date().toISOString() }, { onConflict: "slug" })
+    .select("id")
+    .single();
+  if (workspaceError) throw workspaceError;
+
+  const { error: membershipError } = await admin.from("workspace_members").upsert({
+    workspace_id: workspace.id,
+    user_id: user.id,
+    role: "owner",
+  }, { onConflict: "workspace_id,user_id" });
+  if (membershipError) throw membershipError;
+  return workspace.id as string;
+}
+
 export async function assertWorkspaceMembership(userId: string, workspaceId: string) {
   const admin = createSupabaseAdminClient();
   const { data, error } = await admin.from("workspace_members").select("workspace_id").eq("workspace_id", workspaceId).eq("user_id", userId).maybeSingle();
@@ -58,9 +84,8 @@ export async function saveSocialConnection(input: { user: User; workspaceId: str
   return connection.id as string;
 }
 
-export async function listSocialConnections(userId: string) {
-  const workspaceId = await getDefaultWorkspaceId(userId);
-  if (!workspaceId) return { workspaceId: null, connections: [] };
+export async function listSocialConnections(user: User) {
+  const workspaceId = await ensureDefaultWorkspace(user);
   const admin = createSupabaseAdminClient();
   const { data, error } = await admin.from("social_connections").select("id,provider,status,scopes,expires_at,connected_at,social_accounts(id,platform,display_name,username,avatar_url)").eq("workspace_id", workspaceId).order("connected_at", { ascending: false });
   if (error) throw error;

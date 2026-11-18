@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerEnvironment } from "@/lib/env";
+import { getErrorMessage } from "@/lib/errors";
 import { assertWorkspaceMembership, saveSocialConnection } from "@/lib/social/connections";
 import { discoverSocialAccounts } from "@/lib/social/discovery";
 import { decodeOAuthSession, exchangeAuthorizationCode } from "@/lib/social/oauth";
@@ -32,7 +33,7 @@ export async function GET(request: NextRequest, context: { params: Promise<{ pro
     await saveSocialConnection({ user, workspaceId: session.workspaceId, provider, tokens, accounts });
     destination.searchParams.set("connected", provider);
   } catch (error) {
-    console.error("OAuth callback failed", { provider, error: error instanceof Error ? error.message : "Unknown error" });
+    console.error("OAuth callback failed", { provider, error: getErrorMessage(error) });
     destination.searchParams.set("error", "connection_failed");
     destination.searchParams.set("provider", provider);
   }

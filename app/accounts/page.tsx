@@ -23,7 +23,7 @@ export default async function AccountsPage({ searchParams }: { searchParams: Sea
       const supabase = await createSupabaseServerClient();
       const { data: { user } } = await supabase.auth.getUser();
       authenticated = Boolean(user);
-      if (user) ({ connections } = await listSocialConnections(user.id));
+      if (user) ({ connections } = await listSocialConnections(user));
     } catch { /* The setup banner below explains incomplete configuration. */ }
   }
 
