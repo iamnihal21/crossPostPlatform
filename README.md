@@ -4,15 +4,13 @@ Postlane is a social publishing workspace for managing multiple projects, connec
 
 The production application is being rebuilt component by component with Next.js and TypeScript. The original static prototype remains in `dist/` as a visual reference while this work is in progress.
 
-## Current features
+## Production features
 
-- Multi-project workspace
-- Connected-account management screens
-- Cross-platform post composer
-- Schedule and calendar views
-- Overview and channel analytics
+- Supabase registration and login
+- Secure OAuth connections for supported social providers
+- Encrypted provider-token storage
+- Multi-project creation, account assignment, editing, and archiving
 - Responsive desktop and mobile layouts
-- Interactive demo flows using browser-local state
 
 ## Production development
 
@@ -57,6 +55,8 @@ lib/               Typed navigation and dashboard data
 ## Integration status
 
 The production code includes secure OAuth connection flows for X, LinkedIn, Facebook/Instagram, Threads, and Google/YouTube. Apply the Supabase migrations and copy `.env.example` to `.env.local` before connecting live accounts. Tokens are encrypted with AES-256-GCM before storage and are never exposed to browser clients.
+
+Apply the SQL files in `supabase/migrations/` in filename order. Existing environments must apply new migrations after pulling changes; the Projects component requires `202611180001_projects.sql`.
 
 Generate the encryption key once and store it in your deployment secret manager:
 
