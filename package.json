@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "test": "node --test lib/env.test.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

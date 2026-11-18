@@ -1,22 +1,27 @@
 import { z } from "zod";
 
+const optionalEnvironmentValue = z.preprocess(
+  (value) => typeof value === "string" && value.trim() === "" ? undefined : value,
+  z.string().min(1).optional(),
+);
+
 const serverEnvironmentSchema = z.object({
   NEXT_PUBLIC_APP_URL: z.url(),
   NEXT_PUBLIC_SUPABASE_URL: z.url(),
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
   TOKEN_ENCRYPTION_KEY: z.string().min(1),
-  X_CLIENT_ID: z.string().min(1).optional(),
-  X_CLIENT_SECRET: z.string().min(1).optional(),
-  LINKEDIN_CLIENT_ID: z.string().min(1).optional(),
-  LINKEDIN_CLIENT_SECRET: z.string().min(1).optional(),
-  META_CLIENT_ID: z.string().min(1).optional(),
-  META_CLIENT_SECRET: z.string().min(1).optional(),
+  X_CLIENT_ID: optionalEnvironmentValue,
+  X_CLIENT_SECRET: optionalEnvironmentValue,
+  LINKEDIN_CLIENT_ID: optionalEnvironmentValue,
+  LINKEDIN_CLIENT_SECRET: optionalEnvironmentValue,
+  META_CLIENT_ID: optionalEnvironmentValue,
+  META_CLIENT_SECRET: optionalEnvironmentValue,
   META_GRAPH_VERSION: z.string().regex(/^v\d+\.\d+$/).default("v24.0"),
-  THREADS_CLIENT_ID: z.string().min(1).optional(),
-  THREADS_CLIENT_SECRET: z.string().min(1).optional(),
-  GOOGLE_CLIENT_ID: z.string().min(1).optional(),
-  GOOGLE_CLIENT_SECRET: z.string().min(1).optional(),
+  THREADS_CLIENT_ID: optionalEnvironmentValue,
+  THREADS_CLIENT_SECRET: optionalEnvironmentValue,
+  GOOGLE_CLIENT_ID: optionalEnvironmentValue,
+  GOOGLE_CLIENT_SECRET: optionalEnvironmentValue,
 });
 
 export type ServerEnvironment = z.infer<typeof serverEnvironmentSchema>;
