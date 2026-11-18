@@ -14,7 +14,7 @@ export async function GET(request: NextRequest, context: { params: Promise<{ pro
     const environment = getServerEnvironment();
     const supabase = await createSupabaseServerClient();
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return NextResponse.redirect(new URL("/accounts?error=authentication_required", request.url));
+    if (!user) return NextResponse.redirect(new URL("/login?next=/accounts", request.url));
 
     const workspaceId = request.nextUrl.searchParams.get("workspace_id") ?? await getDefaultWorkspaceId(user.id);
     if (!workspaceId) return NextResponse.redirect(new URL("/accounts?error=workspace_required", request.url));

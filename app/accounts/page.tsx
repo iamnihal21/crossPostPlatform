@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Info, LockKeyhole } from "lucide-react";
 import { ProviderCard } from "@/components/accounts/provider-card";
 import { isSupabaseConfigured } from "@/lib/env";
@@ -32,7 +33,7 @@ export default async function AccountsPage({ searchParams }: { searchParams: Sea
 
       {query.connected && <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">Account connected successfully. Its available channels are ready to use.</div>}
       {query.error && <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">The connection could not be completed. Check authentication, callback URLs and provider credentials, then try again.</div>}
-      {!authenticated && <div className="flex gap-3 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800"><LockKeyhole className="mt-0.5 size-4 shrink-0" /><p>Authentication and Supabase must be configured before live account connections can be stored. Provider cards remain visible so setup can be verified safely.</p></div>}
+      {!authenticated && <div className="flex items-start gap-3 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800"><LockKeyhole className="mt-0.5 size-4 shrink-0" /><p className="flex-1">Sign in with Supabase before connecting a live account.</p><Link href="/login" className="rounded-lg bg-blue-700 px-3 py-1.5 text-xs font-semibold text-white">Sign in</Link></div>}
 
       <div className="flex gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-xs leading-5 text-slate-500"><Info className="mt-0.5 size-4 shrink-0 text-brand-600" /><p>Facebook Pages and Instagram professional accounts share one Meta connection. Threads is authorized separately. Personal Facebook profiles cannot be used for automated publishing.</p></div>
 

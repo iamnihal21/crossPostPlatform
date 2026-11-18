@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronDown, LogOut, Settings, X, type LucideIcon } from "lucide-react";
+import { ChevronDown, Settings, X, type LucideIcon } from "lucide-react";
+import { SignOutButton } from "@/components/auth/sign-out-button";
 import { primaryNavigation, workspaceNavigation } from "@/lib/navigation";
 
 type SidebarProps = { open: boolean; onClose: () => void };
@@ -40,7 +41,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           <div className="mt-3 flex items-center gap-3 rounded-xl p-2">
             <span className="grid size-9 place-items-center rounded-full bg-violet-100 text-xs font-bold text-violet-700">AS</span>
             <span className="min-w-0 flex-1"><span className="block truncate text-xs font-semibold">Arjun Sharma</span><span className="block truncate text-[10px] text-slate-400">arjun@acme.co</span></span>
-            <button className="grid size-8 place-items-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600" aria-label="Sign out"><LogOut className="size-4" /></button>
+            <SignOutButton />
           </div>
         </div>
       </aside>
