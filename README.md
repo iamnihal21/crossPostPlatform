@@ -10,7 +10,7 @@ The production application is being rebuilt component by component with Next.js 
 - Secure OAuth connections for supported social providers
 - Encrypted provider-token storage
 - Multi-project creation, account assignment, editing, and archiving
-- Project-scoped post composer with drafts and immediate LinkedIn publishing
+- Project-scoped post composer with drafts, LinkedIn publishing, and direct YouTube video uploads
 - Responsive desktop and mobile layouts
 
 ## Production development
@@ -57,7 +57,7 @@ lib/               Typed navigation and dashboard data
 
 The production code includes secure OAuth connection flows for X, LinkedIn, Facebook/Instagram, Threads, and Google/YouTube. Apply the Supabase migrations and copy `.env.example` to `.env.local` before connecting live accounts. Tokens are encrypted with AES-256-GCM before storage and are never exposed to browser clients.
 
-Apply the SQL files in `supabase/migrations/` in filename order. Existing environments must apply new migrations after pulling changes. Projects require `202611180001_projects.sql`; post drafts and publishing require `202611190001_posts.sql`.
+Apply the SQL files in `supabase/migrations/` in filename order. Existing environments must apply new migrations after pulling changes. Projects require `202611180001_projects.sql`; post drafts and LinkedIn publishing require `202611190001_posts.sql`; YouTube uploads require `202611190002_youtube_uploads.sql`.
 
 Generate the encryption key once and store it in your deployment secret manager:
 
@@ -75,7 +75,7 @@ https://YOUR_DOMAIN/api/oauth/threads/callback
 https://YOUR_DOMAIN/api/oauth/google/callback
 ```
 
-Real publishing, scheduled background jobs, media storage, token refresh jobs, and analytics syncing are separate components still to be implemented.
+LinkedIn text publishing and resumable YouTube uploads are implemented. Scheduled background jobs and analytics syncing are separate components still to be implemented.
 
 ## Live preview
 
